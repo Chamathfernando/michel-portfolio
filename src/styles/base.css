@@ -1,0 +1,107 @@
+/* ==========================================================================
+   Michel Nugawela — portfolio
+
+   Two designs share one page:
+     · MOBILE  (under 48rem / 768px)  — the phone design: sticky header, plaque quote,
+       full-width book image, scrolling brand row, 2-up work grid, stacked contact.
+     · TABLET + DESKTOP (48rem and up) — the wide design. Content runs the full width of
+       the screen (no centred max-width box); type and spacing scale with clamp().
+
+   Palette: terracotta DD8E58 · sage 708A81 · cream E5D1B8 · camel C2956E · charcoal 2B2129
+   ========================================================================== */
+:root {
+  --terracotta: #DD8E58;
+  --sage: #708A81;
+  --sage-dark: #5C746C;
+  --cream: #E5D1B8;
+  --camel: #C2956E;
+  --charcoal: #2B2129;
+  --charcoal-deep: #1D171C;
+  --charcoal-card: #362A33;
+  --sand: #EDE2D4;
+  --sand-light: #F6EFE6;
+  --strip: #FAF7F2;
+  --ink: #2B2129;
+  --ink-soft: #4A3F35;
+
+  --f-display: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  --f-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --f-sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --f-ui: "Plus Jakarta Sans", "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --f-hand: "Reenie Beanie", "Bradley Hand", cursive;
+
+  /* side padding: fluid on wide screens, fixed on phones. Content always spans the full width. */
+  --pad: clamp(1.25rem, 7.6vw, 7rem);
+  --pad-w: clamp(1.25rem, 6.2vw, 6rem);
+  --gutter: var(--pad);
+  --gutter-w: var(--pad-w);
+
+  /* section headers (01 About / 02 Work / 03 Contact): one size on every screen */
+  --marker-num: 2.75rem;                          /* 44px on every screen */
+  --marker-label: calc(var(--marker-num) / 2);    /* label is half the size of its number (22px) */
+  --marker-rule: 2.25rem;
+
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--sand); color: var(--ink);
+  font-family: var(--f-sans); font-size: 16px; line-height: 1.5;
+  overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--terracotta); color: #fff; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.m-only { display: none; }              /* elements that only exist in the phone design */
+.m-toggle, .m-menu { display: none; }   /* hamburger + full-screen menu: phones only */
+.about__themes { display: none; }             /* wide-screen filler; shown by the desktop rules when there is room */
+.site-footer__credit a { color: var(--sand); text-decoration: underline; text-decoration-color: rgba(237, 226, 212, 0.45); text-underline-offset: 0.2em; transition: color 0.2s, text-decoration-color 0.2s; }
+.site-footer__credit a:hover { color: var(--terracotta); text-decoration-color: currentColor; }
+
+/* work preview (lightbox) */
+/* work preview (case-study modal) */
+.viewer { width: min(94vw, 56.25rem); max-width: none; max-height: 92vh; max-height: 92svh; margin: auto; padding: 0; border: 3px solid #100c0f; border-radius: 0.5rem; background: #1e1a1d; color: var(--sand); overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55); }
+.viewer[open] { display: flex; flex-direction: column; animation: viewer-in 0.28s ease; }
+.viewer::backdrop { background: rgba(20, 15, 19, 0.88); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+@keyframes viewer-in { from { opacity: 0; transform: translateY(0.75rem) scale(0.98); } }
+.viewer__media { flex: none; height: clamp(14rem, 42svh, 21rem); background: #100c0f; }
+.viewer__media img { width: 100%; height: 100%; object-fit: cover; }
+.viewer__info { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 1.5rem 1.25rem 1.25rem; }
+.viewer__meta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: 0 0 1rem; padding-right: 3.25rem; }
+.viewer__cat { font-family: var(--f-ui); font-size: var(--copy-fs); font-weight: 400; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(237, 226, 212, 0.7); }
+.viewer__year { padding: 0.2rem 0.65rem; background: rgba(255, 255, 255, 0.12); font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: var(--copy-fs); letter-spacing: 0.06em; color: rgba(237, 226, 212, 0.85); }
+.viewer__title { margin: 0 0 0.6rem; font-family: "Playfair Display", "Cormorant Garamond", Georgia, serif; font-weight: 400; font-size: clamp(1.6rem, 6.5vw, 2.125rem); line-height: 1.15; letter-spacing: -0.01em; color: #fff; }
+.viewer__sub { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-size: max(1rem, var(--copy-fs)); color: rgba(237, 226, 212, 0.7); }
+.viewer__rule { width: 3rem; height: 1px; margin: 1.5rem 0; background: rgba(237, 226, 212, 0.3); }
+.viewer__desc { margin: 0 0 2rem; font-family: var(--f-ui); font-size: max(0.9375rem, var(--copy-fs)); line-height: 1.7; color: rgba(237, 226, 212, 0.85); }
+.viewer__foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem 1rem; margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(237, 226, 212, 0.18); }
+.viewer__case { flex: 1 1 8rem; font-family: var(--f-ui); font-size: var(--copy-fs); letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.6; color: rgba(237, 226, 212, 0.55); }
+.viewer__back { white-space: nowrap; display: inline-flex; align-items: center; gap: 1.25rem; padding: 0.5rem 0; border: 0; background: none; cursor: pointer; font-family: var(--f-ui); font-size: var(--copy-fs); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-align: left; line-height: 1.5; color: #fff; }
+.viewer__back svg { width: 0.9rem; height: 0.9rem; flex: none; transition: transform 0.2s; }
+.viewer__back:hover svg { transform: translateX(3px); }
+.viewer__close { position: absolute; top: 0.9rem; right: 0.9rem; z-index: 2; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; padding: 0; border: 0; border-radius: 50%; background: #000; color: #fff; cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); transition: background 0.2s; }
+.viewer__close:hover { background: #1d171c; }
+.viewer__close svg { width: 1.05rem; height: 1.05rem; }
+.viewer :focus-visible { outline-color: var(--terracotta); }
+html.modal-open { overflow: hidden; }
+@media (min-width: 48rem) {
+  .viewer { height: min(37.875rem, 88vh); height: min(37.875rem, 88svh); }
+  .viewer[open] { flex-direction: row; }
+  .viewer__media { flex: 0 0 50%; height: auto; }
+  .viewer__info { padding: 2.25rem 2.5rem 1.75rem; }
+  .viewer__meta { margin-bottom: 1.25rem; }
+  .viewer__foot { margin-top: auto; padding-top: 1.5rem; }
+  .viewer__desc { font-size: max(1.0625rem, var(--copy-fs)); }
+  .viewer__title { font-size: clamp(1.75rem, 3.4vw, 2.25rem); }
+  .viewer__close { top: 1.25rem; right: 1.25rem; }
+}
+@keyframes pulse { 50% { opacity: 0.4; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation: none !important; }
+}
+
