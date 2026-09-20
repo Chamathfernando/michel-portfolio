@@ -1,0 +1,74 @@
+/* ==========================================================================
+   Scroll-reveal animations + lazy-image fade
+
+   How it works
+   · Every element with  data-reveal="<effect>"  is watched (see hooks/useScrollReveal.ts). It is
+     hidden until it is scrolled into view, then plays its entrance; once it has left the screen
+     it is reset, so the animation plays again on every visit.  --reveal-delay staggers siblings.
+   · Entrances use CSS animations (not transitions), so hover / focus transitions on the same
+     element keep working.
+   ========================================================================== */
+:root {
+  --reveal-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* starting positions per effect */
+[data-reveal]            { --reveal-from: translate3d(0, 2rem, 0); }
+[data-reveal="down"]     { --reveal-from: translate3d(0, -2rem, 0); }
+[data-reveal="left"]     { --reveal-from: translate3d(-3rem, 0, 0); }
+[data-reveal="right"]    { --reveal-from: translate3d(3rem, 0, 0); }
+[data-reveal="zoom"]     { --reveal-from: translate3d(0, 1.25rem, 0) scale(0.94); }
+[data-reveal="pop"]      { --reveal-from: scale(0.4); }
+[data-reveal="fade"]     { --reveal-from: none; }
+[data-reveal="zoom-out"] { --reveal-from: scale(1.08); --reveal-duration: 1.6s; }
+
+/* hidden until the section is reached… */
+[data-reveal] { opacity: 0; }
+
+/* …then each element plays its entrance */
+[data-reveal][data-in-view="true"] {
+  opacity: var(--reveal-o, 1);
+  animation: reveal-in var(--reveal-duration, 0.9s) var(--reveal-ease) var(--reveal-delay, 0s) backwards;
+}
+@keyframes reveal-in {
+  from { opacity: 0; transform: var(--reveal-from); }
+}
+
+/* the outline behind the About image slides out from behind it */
+.about__visual:not([data-in-view="true"])::before { opacity: 0; }
+.about__visual[data-in-view="true"]::before { animation: frame-in 0.9s var(--reveal-ease) 0.55s backwards; }
+@keyframes frame-in {
+  from { opacity: 0; transform: translate(0, 0); }
+}
+
+/* the picture inside the About frame settles in slowly */
+.about__book[data-in-view="true"] img { animation: image-settle 1.6s var(--reveal-ease) backwards; }
+@keyframes image-settle {
+  from { transform: scale(1.12); }
+}
+
+/* the contact leaf keeps its own resting opacity */
+.contact__leaf { --reveal-o: 0.95; }
+
+/* on phones the sideways slides are shorter */
+@media (max-width: 47.99rem) {
+  [data-reveal="left"]  { --reveal-from: translate3d(-1.5rem, 0, 0); }
+  [data-reveal="right"] { --reveal-from: translate3d(1.5rem, 0, 0); }
+}
+
+/* things that slide or scale in must never create scroll bars or spill into neighbouring sections */
+.hero, .site-footer { overflow: clip; }
+.about, .work, .contact { overflow-x: clip; }
+
+/* ---------- lazy images fade in once loaded ---------- */
+.lazy-img { opacity: 0; transition: opacity 0.7s ease; }
+.lazy-img.is-loaded { opacity: 1; }
+.card img.lazy-img { transition: opacity 0.7s ease, transform 0.5s; }
+
+/* ---------- respect reduced-motion preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal], [data-reveal][data-in-view="true"] { opacity: var(--reveal-o, 1) !important; animation: none !important; }
+  .about__visual:not([data-in-view="true"])::before { opacity: 1; }
+  .about__visual[data-in-view="true"]::before, .about__book[data-in-view="true"] img { animation: none !important; }
+  .lazy-img { transition: none; opacity: 1; }
+}

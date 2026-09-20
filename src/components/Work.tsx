@@ -1,12 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { PAGES, TOTAL_WORKS, WORKS, WORKS_PER_PAGE, type WorkKey } from '../data/works';
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
 import { asset } from '../utils/asset';
-import CaseStudyModal from './CaseStudyModal';
+import { reveal } from '../utils/reveal';
+import LazyImage from './LazyImage';
 import { ChevronLeft, ChevronRight } from './icons';
 import SectionMarker from './SectionMarker';
 
 const FADE_MS = 250;
+
+// The case-study popup is only needed once a card is opened, so it is its own JS chunk.
+const loadModal = () => import('./CaseStudyModal');
+const CaseStudyModal = lazy(loadModal);
 
 /** "02 Work": paginated grid of projects; each card opens the case-study modal. */
 export default function Work() {
@@ -42,24 +47,26 @@ export default function Work() {
       <section className="work" id="work" aria-labelledby="work-title">
         <div className="work__head">
           <SectionMarker as="h2" id="work-title" num="02" label="Work" />
-          <p className="work__kicker">Selected work</p>
+          <p className="work__kicker" {...reveal('right', 1)}>Selected work</p>
         </div>
 
         <ul className={fading ? 'work__grid is-fading' : 'work__grid'} id="work-grid">
           {PAGES[page].map((key, i) => {
             const w = WORKS[key];
             return (
-              <li key={`${page}-${i}`}>
+              <li key={`${page}-${i}`} {...reveal('up', i % 3)}>
                 <button
                   className="card"
                   type="button"
+                  onPointerEnter={loadModal}
+                  onFocus={loadModal}
                   onClick={() => {
                     setActiveKey(key);
                     setModalOpen(true);
                   }}
                 >
                   <span className="card__frame">
-                    <img src={asset(w.file)} width={w.width} height={w.height} alt={w.alt} decoding="async" />
+                    <LazyImage src={asset(w.file)} width={w.width} height={w.height} alt={w.alt} />
                   </span>
                 </button>
               </li>
@@ -67,7 +74,7 @@ export default function Work() {
           })}
         </ul>
 
-        <div className="work__foot">
+        <div className="work__foot" {...reveal('up', 0)}>
           <p className="work__count" id="work-count" aria-live="polite">
             {`Showing ${from}–${to} of ${TOTAL_WORKS} works`}
           </p>
@@ -98,7 +105,11 @@ export default function Work() {
         </div>
       </section>
 
-      <CaseStudyModal work={activeKey ? WORKS[activeKey] : null} open={modalOpen} onClose={() => setModalOpen(false)} />
+      {activeKey && (
+        <Suspense fallback={null}>
+          <CaseStudyModal work={WORKS[activeKey]} open={modalOpen} onClose={() => setModalOpen(false)} />
+        </Suspense>
+      )}
     </>
   );
 }

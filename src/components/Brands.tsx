@@ -3,6 +3,7 @@ import { useLayout } from '../context/layout';
 import { BRANDS } from '../data/brands';
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
 import { asset } from '../utils/asset';
+import { reveal } from '../utils/reveal';
 import { ChevronLeft, ChevronRight } from './icons';
 
 const AUTOPLAY_MS = 4500;
@@ -136,14 +137,14 @@ export default function Brands() {
       onBlur={() => setFocused(false)}
     >
       <div className="brands__bar">
-        <p className="brands__label">
+        <p className="brands__label" {...reveal('left', 0)}>
           <span>Brands</span> <span>I&apos;ve worked with</span>
           <i />
         </p>
-        <button className="brands__nav" id="brands-prev" type="button" aria-label="Previous brands" onClick={() => step(-1)}>
+        <button className="brands__nav" id="brands-prev" type="button" {...reveal('fade', 2)} aria-label="Previous brands" onClick={() => step(-1)}>
           <ChevronLeft />
         </button>
-        <div ref={viewportRef} className="brands__viewport" id="brands-viewport" onScroll={() => !desk && measure()}>
+        <div ref={viewportRef} className="brands__viewport" id="brands-viewport" {...reveal('up', 1)} onScroll={() => !desk && measure()}>
           <ul className={fading ? 'brands__track is-fading' : 'brands__track'} id="brands-track">
             {order.map((brand) => (
               <li className="brand-mark" key={brand.name}>
@@ -152,6 +153,7 @@ export default function Brands() {
                   width={brand.width}
                   height={brand.height}
                   alt={brand.name}
+                  loading="lazy"
                   decoding="async"
                   draggable={false}
                 />
@@ -159,11 +161,11 @@ export default function Brands() {
             ))}
           </ul>
         </div>
-        <button className="brands__nav" id="brands-next" type="button" aria-label="Next brands" onClick={() => step(1)}>
+        <button className="brands__nav" id="brands-next" type="button" {...reveal('fade', 2)} aria-label="Next brands" onClick={() => step(1)}>
           <ChevronRight />
         </button>
       </div>
-      <div className="brands__dots" id="brands-dots" role="group" aria-label="Brand slides">
+      <div className="brands__dots" id="brands-dots" role="group" aria-label="Brand slides" {...reveal('fade', 3)}>
         {Array.from({ length: dotCount }, (_, i) => (
           <button
             key={i}

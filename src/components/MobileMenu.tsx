@@ -53,7 +53,7 @@ export default function MobileMenu({ open, current, onClose }: MobileMenuProps) 
   return (
     <div ref={menuRef} className={open ? 'm-menu is-open' : 'm-menu'} id="m-menu" role="dialog" aria-modal="true" aria-label="Menu">
       <div className="m-menu__bar">
-        <a className="m-menu__brand" href="#home">
+        <a className="m-menu__brand" href="#home" onClick={() => onClose(false)}>
           Michel Nugawela
         </a>
         <button ref={closeRef} className="m-toggle" id="menu-close" type="button" aria-label="Close menu" onClick={() => onClose(true)}>

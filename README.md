@@ -68,9 +68,11 @@ domain root **or** any sub-folder without changes. If you always deploy at the d
    │  ├─ About.tsx            Image height follows the text height; on wide screens a themes list fills the gap
    │  ├─ Brands.tsx           Desktop carousel / phone swipe row
    │  ├─ Work.tsx             Paginated grid + opens the modal
-   │  ├─ CaseStudyModal.tsx   Native <dialog> case-study popup
-   │  ├─ Contact.tsx          Social links + contact form
+   │  ├─ CaseStudyModal.tsx   Native <dialog> case-study popup (loaded on demand as its own JS chunk)
+   │  ├─ Contact.tsx          Social links + contact form (validation, confirmation)
+   │  ├─ ContactSuccessDialog.tsx  "Message sent successfully" popup
    │  ├─ Footer.tsx
+   │  ├─ LazyImage.tsx        <img loading="lazy"> that fades in once loaded
    │  ├─ SectionMarker.tsx    "01 ── About" style section header
    │  └─ icons.tsx            Inline SVG icons
    ├─ data/                   ← content you edit
@@ -80,14 +82,20 @@ domain root **or** any sub-folder without changes. If you always deploy at the d
    │  └─ site.ts              Nav items and social-media links
    ├─ hooks/
    │  ├─ useAboutFit.ts       Sizes the About image and decides when to stack
+   │  ├─ useCleanHashLinks.ts  In-page links scroll to the section, then remove "#section" from the URL
+   │  ├─ useScrollReveal.ts   Scroll-triggered animations (marks elements as on screen / off screen)
    │  ├─ useScrollSpy.ts      Highlights the current section in the nav
    │  └─ useMediaQuery.ts
    ├─ context/                Shared "wide / stacked" layout state
    ├─ styles/
    │  ├─ base.css             Colours, fonts, resets, modal styles
    │  ├─ desktop.css          Tablet + desktop design (≥ 48rem)
-   │  └─ mobile.css           Phone design (< 48rem)
-   └─ utils/asset.ts          Looks up a file in src/assets, e.g. asset('brands/samsung.png')
+   │  ├─ mobile.css           Phone design (< 48rem)
+   │  └─ reveal.css           Scroll animations + lazy-image fade
+   └─ utils/
+      ├─ validation.ts        Contact-form field rules (names, email, message)
+      ├─ asset.ts             Looks up a file in src/assets, e.g. asset('brands/samsung.png')
+      └─ reveal.ts            reveal('up', 2) → props that animate an element in when it is reached
 ```
 
 ## Editing content
@@ -113,27 +121,55 @@ Fonts are loaded from Google Fonts in `index.html`.
 **Hero and contact artwork** — `src/assets/hero.webp`, `hero-1600.webp` and `leaf.webp`. Phones never download these
 (they use a `<picture>` source that only applies at `48em` and up).
 
-## Making the contact form actually send
+## Scroll animations and lazy loading
 
-The form validates and shows a thank-you message, but it is **front-end only**. In `src/components/Contact.tsx`,
-inside `onSubmit`, send the data to your form service before showing the message, for example:
+**Animations play when a section is reached, not only on page load.** Every animated element carries
+`data-reveal="<effect>"` (added with the `reveal()` helper). `useScrollReveal()` (called once in `App.tsx`) watches them with an
+`IntersectionObserver`: when an element scrolls into view it gets `data-in-view="true"` and `src/styles/reveal.css` plays its
+entrance; once it has left the screen it is reset, so it plays again the next time you scroll back to it.
+
+```tsx
+<h2 {...reveal('up', 1)}>…</h2>     // effect, then a "step" that staggers siblings (each step = 90 ms)
+```
+
+- **Effects:** `up`, `down`, `left`, `right`, `zoom`, `pop`, `fade`, `zoom-out`. Their start positions and timings are at the top of `reveal.css`.
+- **Play once instead of every time:** set `REPLAY_ON_REENTRY = false` in `src/hooks/useScrollReveal.ts`.
+- **Animate something new:** spread `{...reveal('up')}` onto it. Elements that appear later (like the next page of Work cards) are picked up automatically.
+- **Reduced motion:** visitors who ask their system for reduced motion get everything shown immediately, with no movement.
+
+**Lazy loading**
+
+- The About picture and every Work card use `<LazyImage>` (`loading="lazy"`): the browser only downloads them as they approach the screen,
+  and they fade in when ready. Always give lazy images `width` and `height` so the page never jumps.
+- Brand logos and the contact leaf are `loading="lazy"` too; the hero artwork is loaded first (`fetchPriority="high"`).
+- The case-study popup is a separate JavaScript chunk (`React.lazy`). It is fetched the first time you hover or focus a card, so it is
+  ready by the time it is clicked.
+
+## Contact form: validation and confirmation
+
+The form is **front-end only** for now (there is no backend yet):
+
+- **Validation** (`src/utils/validation.ts`): first and last name are required and can't contain numbers (letters from any alphabet, spaces, hyphens and apostrophes are fine); the email must look like `name@example.com`; the message can't be blank. Errors appear under each field, clear as soon as they're fixed, and the first invalid field gets focus.
+- **Confirmation:** when every field is valid, a "Message sent successfully" dialog opens (`src/components/ContactSuccessDialog.tsx`) and the form is cleared. Close it with the button, **Esc**, or a click outside.
+
+When you have a backend, send the data in `onSubmit` in `src/components/Contact.tsx`, just before the dialog opens, for example:
 
 ```ts
-const data = Object.fromEntries(new FormData(form));
 await fetch('https://your-endpoint.example/submit', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data),
+  body: JSON.stringify(values),
 });
 ```
 
-(Make `onSubmit` `async`, and handle errors by setting a different status message.)
+(Make `onSubmit` `async`; if the request fails, set an error message instead of opening the dialog. Repeat the validation on the server.)
 
 ## Accessibility notes
 
 - Semantic landmarks, visible focus rings and `aria-current` on the active nav link.
 - The phone menu and case-study popup trap focus and close with **Esc**.
-- Animations (carousel fade, grid fade, smooth scroll) are disabled when the visitor prefers reduced motion.
+- In-page links (`#about`, `#work`, …) scroll smoothly, then the `#section` is removed from the address bar; the section gets keyboard focus. To keep the hash in the URL, delete the `useCleanHashLinks()` call in `App.tsx`.
+- Animations (scroll reveals, carousel fade, grid fade, smooth scroll) are disabled when the visitor prefers reduced motion.
 
 ## Troubleshooting
 

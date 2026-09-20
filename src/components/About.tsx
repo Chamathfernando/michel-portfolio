@@ -2,7 +2,9 @@ import { useRef } from 'react';
 import { useLayout } from '../context/layout';
 import { ABOUT_THEMES } from '../data/about';
 import { useAboutFit } from '../hooks/useAboutFit';
+import LazyImage from './LazyImage';
 import { asset } from '../utils/asset';
+import { reveal } from '../utils/reveal';
 import SectionMarker from './SectionMarker';
 
 export default function About() {
@@ -19,18 +21,18 @@ export default function About() {
       <div ref={gridRef} className="about__grid">
         <div ref={textRef} className="about__text">
           <SectionMarker num="01" label="About" />
-          <h2 className="about__title" id="about-title">
+          <h2 className="about__title" id="about-title" {...reveal('up', 1)}>
             A lifelong fascination with what makes brands matter.
           </h2>
           <div ref={copyRef} className="about__copy">
-            <p>
+            <p {...reveal('up', 2)}>
               Michel Nugawela is a brand strategist and creative thinker focused on helping organisations discover, articulate and express what makes them distinctive. With experience across global and regional brands, he brings a unique blend of strategic insight, creative direction and human understanding to the world of branding.
             </p>
-            <p>
+            <p {...reveal('up', 3)}>
               Beyond brands, Michel is an aspiring author, exploring ideas that inspire people, provoke thought and celebrate the stories that shape our world.
             </p>
           </div>
-          <div className="about__sign">
+          <div className="about__sign" {...reveal('up', 4)}>
             <div className="about__rule" />
             <p className="about__tag">
               Different perspectives
@@ -41,21 +43,22 @@ export default function About() {
         </div>
         {/* wide screens: fills the gap between text and image (positioned by useAboutFit when there is room) */}
         <ul className="about__themes">
-          {ABOUT_THEMES.map((theme) => (
-            <li key={theme}>{theme}</li>
+          {ABOUT_THEMES.map((theme, i) => (
+            <li key={theme} {...reveal('left', 2 + i)}>
+              {theme}
+            </li>
           ))}
         </ul>
-        <div className="about__visual">
-          <div className="about__book">
-            <img
+        <div className="about__visual" data-watch="">
+          <div className="about__book" {...reveal('zoom', 1)}>
+            <LazyImage
               src={asset('books.webp')}
               width={1046}
               height={1504}
               alt="A stack of four books titled Strategy, Creativity, Culture and Humanity"
-              decoding="async"
             />
           </div>
-          <div className="about__script" aria-hidden="true">
+          <div className="about__script" aria-hidden="true" {...reveal('up', 5)}>
             <p>
               More <br />
               than <br />

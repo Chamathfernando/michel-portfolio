@@ -5,8 +5,6 @@ import react from '@vitejs/plugin-react';
 // (GitHub Pages, a shared host, opening dist/ behind any static server).
 // Change it to '/' if you always deploy at the domain root.
 export default defineConfig({
-  // base: './',
-  // build: { assetsDir: 'static' },
   plugins: [react()],
   base: "/michel-portfolio",
 });

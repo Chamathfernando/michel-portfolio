@@ -9,11 +9,15 @@ import MobileMenu from './components/MobileMenu';
 import Work from './components/Work';
 import { useLayout } from './context/layout';
 import { SECTION_IDS } from './data/site';
+import { useCleanHashLinks } from './hooks/useCleanHashLinks';
+import { useScrollReveal } from './hooks/useScrollReveal';
 import { useScrollSpy } from './hooks/useScrollSpy';
 
 export default function App() {
   const { wide } = useLayout();
   const current = useScrollSpy(SECTION_IDS);
+  useScrollReveal();
+  useCleanHashLinks();
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
 

@@ -16,6 +16,12 @@ export const CloseIcon = ({ strokeWidth = 1.6, ...p }: IconProps) => (
   </svg>
 );
 
+export const CheckIcon = ({ strokeWidth = 1.6, ...p }: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}>
+    <path d="M4.5 12.5 9.5 17.5 19.5 6.5" />
+  </svg>
+);
+
 export const ChevronLeft = ({ strokeWidth = 1.5, ...p }: IconProps) => (
   <svg viewBox="0 0 8 14" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}>
     <path d="M7 1 1 7l6 6" />

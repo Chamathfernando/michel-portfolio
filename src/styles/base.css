@@ -46,6 +46,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+[tabindex="-1"]:focus { outline: none; } /* sections focused after an in-page link: no ring on the whole section */
 body {
   margin: 0; background: var(--sand); color: var(--ink);
   font-family: var(--f-sans); font-size: 16px; line-height: 1.5;
@@ -88,6 +89,22 @@ button { font: inherit; color: inherit; }
 .viewer__close svg { width: 1.05rem; height: 1.05rem; }
 .viewer :focus-visible { outline-color: var(--terracotta); }
 html.modal-open { overflow: hidden; }
+
+/* ---------- contact form: field errors ---------- */
+.field__error { margin: 0.4rem 0 0; font-size: calc(var(--copy-fs) * 0.85); font-weight: 500; line-height: 1.35; color: #7a1414; }
+.form .field input[aria-invalid="true"], .form .field textarea[aria-invalid="true"] { border-bottom-color: #7a1414; box-shadow: 0 1px 0 #7a1414; }
+
+/* ---------- "message sent" confirmation ---------- */
+.notice { width: min(92vw, 28rem); max-width: none; margin: auto; padding: 2.5rem 1.75rem 2rem; border: 3px solid #100c0f; border-radius: 0.5rem; background: #1e1a1d; color: var(--sand); text-align: center; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55); }
+.notice[open] { display: flex; flex-direction: column; align-items: center; animation: viewer-in 0.28s ease; }
+.notice::backdrop { background: rgba(20, 15, 19, 0.88); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+.notice__icon { width: 3rem; height: 3rem; margin-bottom: 1.25rem; color: var(--terracotta); }
+.notice__title { margin: 0 0 0.9rem; font-family: var(--f-serif); font-weight: 400; font-size: clamp(1.6rem, 6.5vw, 2rem); line-height: 1.15; }
+.notice__text { margin: 0 0 1.75rem; font-family: var(--f-ui); font-size: max(0.9375rem, var(--copy-fs)); line-height: 1.7; color: rgba(237, 226, 212, 0.85); }
+.notice__btn { padding: 0.85rem 2.25rem; border: 0; border-radius: 0.25rem; cursor: pointer; background: var(--terracotta); color: var(--charcoal); font-family: var(--f-ui); font-size: var(--copy-fs); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; transition: background 0.2s; }
+.notice__btn:hover { background: #e9a06c; }
+.notice__btn:focus-visible { outline: 2px solid var(--sand); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .notice[open] { animation: none; } }
 @media (min-width: 48rem) {
   .viewer { height: min(37.875rem, 88vh); height: min(37.875rem, 88svh); }
   .viewer[open] { flex-direction: row; }
