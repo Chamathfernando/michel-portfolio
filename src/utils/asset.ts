@@ -1,9 +1,25 @@
 /**
- * Resolves a file inside `public/assets/` so it works whatever `base` Vite is
- * configured with (root, sub-folder or relative). Pass the path *inside* the
- * assets folder, e.g. asset('brands/samsung.png').
+ * Every image in `src/assets/` is picked up here at build time, so Vite can
+ * hash, optimise and cache-bust it. Look one up by its path *inside* the
+ * assets folder, e.g. asset('brands/samsung.png') or asset('hero.webp').
+ *
+ * To swap an image, replace the file in `src/assets/` (keep the file name)
+ * or point the entry in `src/data/*.ts` at a new file.
  */
-export const asset = (path: string): string => `${import.meta.env.BASE_URL}assets/${path}`;
+const images = import.meta.glob<string>('../assets/**/*.{webp,png,jpg,jpeg,svg,avif,gif}', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+
+export function asset(path: string): string {
+  const url = images[`../assets/${path}`];
+  if (!url) {
+    console.warn(`[asset] "src/assets/${path}" was not found.`);
+    return '';
+  }
+  return url;
+}
 
 /**
  * 1×1 transparent GIF. The hero and contact artwork use `<picture>` so phones

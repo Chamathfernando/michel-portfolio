@@ -1,7 +1,7 @@
 export type WorkKey = 'tote' | 'brighter' | 'people' | 'good' | 'story';
 
 export interface WorkItem {
-  /** File inside public/assets/ */
+  /** File inside src/assets/ */
   file: string;
   width: number;
   height: number;

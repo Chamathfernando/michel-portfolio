@@ -1,6 +1,6 @@
 export interface Brand {
   name: string;
-  /** File inside public/assets/brands/ — replace the image, keep the name (or change it here). */
+  /** File inside src/assets/brands/ — replace the image, keep the name (or change it here). */
   file: string;
   width: number;
   height: number;

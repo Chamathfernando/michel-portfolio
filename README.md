@@ -56,9 +56,9 @@ domain root **or** any sub-folder without changes. If you always deploy at the d
 
 ```
 ├─ index.html                 Vite entry: page title, meta description, Google Fonts link
-├─ public/assets/             Images, served as-is (hero, work photos, brand logos…)
-│  └─ brands/                 Client logos for "Brands I've worked with"
 └─ src/
+   ├─ assets/                 Images, bundled and cache-busted by Vite (hero, work photos…)
+   │  └─ brands/              Client logos for "Brands I've worked with"
    ├─ main.tsx                Mounts <App/> and loads the stylesheets
    ├─ App.tsx                 Page layout, phone-menu state, scroll-spy
    ├─ components/
@@ -87,20 +87,20 @@ domain root **or** any sub-folder without changes. If you always deploy at the d
    │  ├─ base.css             Colours, fonts, resets, modal styles
    │  ├─ desktop.css          Tablet + desktop design (≥ 48rem)
    │  └─ mobile.css           Phone design (< 48rem)
-   └─ utils/asset.ts          Builds correct URLs for files in public/assets
+   └─ utils/asset.ts          Looks up a file in src/assets, e.g. asset('brands/samsung.png')
 ```
 
 ## Editing content
 
 **Text** (hero, about, contact copy) lives directly in the components: `Hero.tsx`, `About.tsx`, `Contact.tsx`, `Footer.tsx`.
 
-**Brand logos** — replace the files in `public/assets/brands/` (keep the names) or edit `src/data/brands.ts`.
+**Brand logos** — replace the files in `src/assets/brands/` (keep the names) or edit `src/data/brands.ts`.
 Add, remove or reorder entries freely; the carousel, dots and swipe row adapt automatically.
 Use transparent logos, roughly 2.4:1 to 3:1 wide, about 256px tall or larger (PNG, SVG or WebP).
 
 **Work projects** — edit `src/data/works.ts`:
 
-1. Add the image to `public/assets/`.
+1. Add the image to `src/assets/`.
 2. Add an entry to `WORKS` (file name, size, alt text, and the case-study title / category / year / subtitle / description shown in the popup).
 3. Reference its key in `PAGES` (12 projects per page). Add another array to `PAGES` for a third page, and update `TOTAL_WORKS`.
 
@@ -110,7 +110,7 @@ Use transparent logos, roughly 2.4:1 to 3:1 wide, about 256px tall or larger (PN
 (`--terracotta`, `--sage`, `--charcoal`, `--f-serif`, …). The phone design overrides the fonts in `src/styles/mobile.css`.
 Fonts are loaded from Google Fonts in `index.html`.
 
-**Hero and contact artwork** — `public/assets/hero.webp`, `hero-1600.webp` and `leaf.webp`. Phones never download these
+**Hero and contact artwork** — `src/assets/hero.webp`, `hero-1600.webp` and `leaf.webp`. Phones never download these
 (they use a `<picture>` source that only applies at `48em` and up).
 
 ## Making the contact form actually send
@@ -139,4 +139,5 @@ await fetch('https://your-endpoint.example/submit', {
 
 - **Fonts look different offline** — the Google Fonts link in `index.html` needs internet access; the page falls back to Georgia / Arial without it.
 - **Blank images after deploying to a sub-folder** — make sure `base` in `vite.config.ts` is still `'./'`.
+- **An image doesn't show / `[asset] ... was not found` in the console** — the file name in `src/data/*.ts` doesn't match a file in `src/assets/` (names are case-sensitive). New or renamed image files are picked up automatically by the dev server; for a production site, run `npm run build` again.
 - **`npm install` complains about the Node version** — upgrade to Node 20.19+ or 22.12+.
