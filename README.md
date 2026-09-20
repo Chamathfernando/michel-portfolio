@@ -85,6 +85,7 @@ domain root **or** any sub-folder without changes. If you always deploy at the d
    │  ├─ useCleanHashLinks.ts  In-page links scroll to the section, then remove "#section" from the URL
    │  ├─ useScrollReveal.ts   Scroll-triggered animations (marks elements as on screen / off screen)
    │  ├─ useScrollSpy.ts      Highlights the current section in the nav
+   │  ├─ useStickyHeader.ts   Keeps the header pinned on every screen size: measures its height for anchor links, adds a shadow once scrolled
    │  └─ useMediaQuery.ts
    ├─ context/                Shared "wide / stacked" layout state
    ├─ styles/

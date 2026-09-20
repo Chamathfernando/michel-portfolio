@@ -1,5 +1,6 @@
-import type { RefObject } from 'react';
+import { useRef, type RefObject } from 'react';
 import { NAV_ITEMS, type SectionId } from '../data/site';
+import { useStickyHeader } from '../hooks/useStickyHeader';
 import { MenuIcon } from './icons';
 
 interface HeaderProps {
@@ -10,8 +11,11 @@ interface HeaderProps {
 }
 
 export default function Header({ current, menuOpen, onToggleMenu, toggleRef }: HeaderProps) {
+  const headerRef = useRef<HTMLElement>(null);
+  useStickyHeader(headerRef);
+
   return (
-    <header className="site-header">
+    <header ref={headerRef} className="site-header">
       <a className="brand" href="#home">
         Michel Nugawela
       </a>

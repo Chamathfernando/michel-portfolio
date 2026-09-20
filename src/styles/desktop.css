@@ -2,7 +2,7 @@
    TABLET + DESKTOP  (48rem and up)
    ########################################################################## */
 @media (min-width: 48rem) {
-  [id] { scroll-margin-top: 1rem; }
+  [id] { scroll-margin-top: var(--sticky-h, 4.5rem); }          /* anchor links stop just below the sticky header (height measured by useStickyHeader) */
   html { --copy-fs: clamp(0.9rem, 1.1vw, 1.375rem); }          /* About paragraph size, reused by the brands heading */
   html.is-stacked { --copy-fs: clamp(0.9375rem, 2.1vw, 1.125rem); }
 
@@ -14,8 +14,14 @@
 
   /* header */
   .site-header {
+    position: sticky; top: 0; z-index: 50;                       /* stays at the top while scrolling */
     display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem 2rem;
     padding: clamp(1.25rem, 2.2vw, 2rem) var(--gutter) clamp(0.75rem, 1vw, 1rem); background: var(--sand);
+    transition: box-shadow 0.25s ease, background-color 0.25s ease;
+  }
+  .site-header[data-scrolled="true"] {                            /* once the page has moved: a soft edge over the content */
+    background: rgba(237, 226, 212, 0.94); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 rgba(43, 33, 41, 0.1), 0 10px 24px -14px rgba(43, 33, 41, 0.3);
   }
   .brand { font-family: var(--f-display); font-weight: 500; letter-spacing: 0.03em; line-height: 1.1; font-size: clamp(1.5rem, 2.5vw, 3rem); color: var(--ink); transition: opacity 0.2s; }
   .brand:hover { opacity: 0.85; }
