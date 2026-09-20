@@ -7,5 +7,5 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   // build: { assetsDir: 'static' },
   plugins: [react()],
-  base: './michel-portfolio',
+  base: '/michel-portfolio',
 });
